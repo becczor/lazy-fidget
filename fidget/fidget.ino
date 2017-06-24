@@ -5,18 +5,15 @@
 */
 
 // For motor
+// https://cdn.sparkfun.com/assets/resources/4/4/DC_motor_circuits_notes_2up.pdf
 int pwmPin = 3; // Chose one pin with ~
+int dutyCycle = 100; // For motor PWM, 8 bit value [0,255]
 
 // For button
 int buttonPin = 7;
-
-int dutyCycle = 100; // For motor PWM, 8 bit value [0,255]
-
-
 int buttonState = HIGH;
 int buttonReading;
 int buttonPrevious = LOW;
-
 long timeSinceClick = 0;
 long debounce = 200;
 
@@ -32,6 +29,7 @@ void loop() {
   // if the input just went from LOW and HIGH and we've waited long enough
   // to ignore any noise on the circuit, toggle the output pin and remember
   // the timeSinceClick
+  // https://www.arduino.cc/en/tutorial/switch
   if (buttonReading == HIGH && buttonPrevious == LOW && millis() - timeSinceClick > debounce) {
     if (buttonState == HIGH)
       buttonState = LOW;
