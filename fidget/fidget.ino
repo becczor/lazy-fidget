@@ -1,21 +1,54 @@
-int PWM_pin = 3; // Chose one pin with ~
+/* 
+ *  Lazy Fidget Spinner
+ *  by Rebecca Lindblom 
+ *  June 2017
+*/
+
+// For motor
+int pwmPin = 3; // Chose one pin with ~
+
+// For button
+int buttonPin = 7;
+
+int dutyCycle = 100; // For motor PWM, 8 bit value [0,255]
+
+
+int buttonState = HIGH;
+int buttonReading;
+int buttonPrevious = LOW;
+
+long timeSinceClick = 0;
+long debounce = 200;
 
 void setup() {
-  // For motor to run
-  pinMode( PWM_pin, OUTPUT );
-  // For led to blink
-  //pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(pwmPin, OUTPUT);
+  pinMode(buttonPin, INPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 
-int duty_cycle = 150; // 8 it value [0,255]
 
 void loop() {
-  analogWrite( PWM_pin, duty_cycle );
-  //digitalWrite(LED_BUILTIN, HIGH);
-  delay(2000);
-  
-  analogWrite( PWM_pin, 0 );
-  //digitalWrite(LED_BUILTIN, LOW);
-  delay(3000);
-  
+  buttonReading = digitalRead(buttonPin);
+  // if the input just went from LOW and HIGH and we've waited long enough
+  // to ignore any noise on the circuit, toggle the output pin and remember
+  // the timeSinceClick
+  if (buttonReading == HIGH && buttonPrevious == LOW && millis() - timeSinceClick > debounce) {
+    if (buttonState == HIGH)
+      buttonState = LOW;
+    else
+      buttonState = HIGH;
+    timeSinceClick = millis();    
+  }
+
+  digitalWrite(LED_BUILTIN, buttonState);
+
+  buttonPrevious = buttonReading;
+
+  if (buttonState == HIGH) {
+    analogWrite(pwmPin, dutyCycle);
+    //digitalWrite(LED_BUILTIN, HIGH);
+  } else {
+    analogWrite(pwmPin, 0);
+  }
+
 }
